@@ -18,8 +18,12 @@ import { Input } from "@/components/ui/input";
 import { signinSchema } from "@/lib/validations";
 import { EyeIcon, EyeOffIcon, Loader } from "lucide-react";
 import Link from "next/link";
+import { toast } from "sonner";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const Signin = () => {
+  const router = useRouter()
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const form = useForm<z.infer<typeof signinSchema>>({
@@ -31,15 +35,21 @@ const Signin = () => {
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof signinSchema>) {
+  async function onSubmit(values: z.infer<typeof signinSchema>) {
     try {
       setIsLoading(true);
-      setTimeout(() => {
-        console.log(values);
-        setIsLoading(false);
-      }, 2000);
+     await signIn("credentials", {
+        email: values.email,
+        password: values.password,
+        redirect: false,
+      });
+      toast.success("Signin successful");
+      return router.push("/");
+
     } catch (error) {
       console.log(error);
+    }finally{
+      setIsLoading(false);
     }
   }
   return (

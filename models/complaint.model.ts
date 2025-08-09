@@ -23,6 +23,6 @@ const ComplaintSchema = new mongoose.Schema<IComplaint>({
   dateResolved: { type: Date, default: null }
 });
 
-const Complaint = mongoose.model<IComplaint>("Complaint", ComplaintSchema);
+const Complaint = mongoose.models.Complaint || mongoose.model<IComplaint>("Complaint", ComplaintSchema);
 
 export default Complaint;

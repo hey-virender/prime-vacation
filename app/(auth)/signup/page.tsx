@@ -18,6 +18,9 @@ import { Input } from "@/components/ui/input";
 import { signupSchema } from "@/lib/validations";
 import { EyeIcon, EyeOffIcon, Loader, Loader2 } from "lucide-react";
 import Link from "next/link";
+import axios from "axios";
+import { redirect } from "next/navigation";
+import { toast } from "sonner";
 
 const Signup = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -32,16 +35,19 @@ const Signup = () => {
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof signupSchema>) {
+  async function onSubmit(values: z.infer<typeof signupSchema>) {
     try {
       setIsLoading(true);
-      setTimeout(() => {
-        console.log(values);
-        setIsLoading(false);
-      }, 2000);
+      const response = await axios.post('/api/auth/signup', values);
+      if (response.status === 201) {
+        toast.success("User created successfully");
+        redirect("/signin");
+      }
     } catch (error) {
       console.log(error);
-    } 
+    }finally{
+      setIsLoading(false);
+    }
   }
   return (
     <Form {...form}>

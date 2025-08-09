@@ -4,25 +4,26 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { connectDB } from "./lib/connectDB";
 import User from "./models/user.model";
 
-export const { handlers, authOptions } = NextAuth({
+export const { handlers, auth, signIn, signOut } = NextAuth({
 
   providers: [
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "text", placeholder: "you@example.com" },
-        password: { label: "Password", type: "password" }
+        email: {},
+        password: {}
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
+        const { email, password } = credentials || {};
+        if (!email || !password) {
           throw new Error("Invalid credentials");
         }
         await connectDB();
-        const user = await User.findOne({ email: credentials.email });
+        const user = await User.findOne({ email });
         if (!user) {
           throw new Error("User not found");
         }
-        const isValid = compareSync(credentials.password, user.password);
+        const isValid = compareSync(password.toString(), user.password);
         if (!isValid) {
           throw new Error("Invalid credentials");
         }
@@ -41,15 +42,18 @@ export const { handlers, authOptions } = NextAuth({
     },
     async session({ session, token }) {
       if (token) {
-        session.user = {
-          email: token.email,
-          name: token.name,
-        };
+        session.user.id = token.id!;
+        session.user.email = token.email!;
+        session.user.name = token.name;
       }
       return session;
     }
   },
   pages: {
     signIn: '/signin'
+  
+  },
+  session: {
+    strategy: "jwt"
   }
 })
