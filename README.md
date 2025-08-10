@@ -124,6 +124,17 @@ Runs on [http://localhost:3000](http://localhost:3000)
 npm run build
 npm start
 
+
+## 🖼 Application Screenshots
+
+### 1. Home Page/Login Screen
+![Signup](./screenshots/signup.png)
+
+### 2. Complaint Submission Form
+![Complaint Form](./screenshots/complaint.png)
+
+### 3. Admin Dashboard View
+![Admin Dashboard](./screenshots/admin.png)
 text
 
 ---
