@@ -17,7 +17,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { complaintSchema} from "@/lib/validations";
 import {  Loader } from "lucide-react";
-import Link from "next/link";
 import { toast } from "sonner";
 
 import { useRouter } from "next/navigation";
@@ -25,6 +24,7 @@ import { Textarea } from "./ui/textarea";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { Label } from "./ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import axios from "axios";
 
 
 const ComplaintForm = () => {
@@ -45,9 +45,14 @@ const ComplaintForm = () => {
   async function onSubmit(values: z.infer<typeof complaintSchema>) {
     try {
       setIsLoading(true);
-      // await Complaint.create(values);
+      const data = await axios.post("/api/complaint", {
+        title: values.title,
+        description: values.description,
+        category: values.category,
+        priority: values.priority,
+      });
+      form.reset();
       toast.success("Complaint submitted successfully");
-      console.log("Complaint submitted:", values);
 
     } catch (error) {
       console.log(error);
@@ -56,18 +61,20 @@ const ComplaintForm = () => {
     }
   }
   return (
-    <Form {...form}>
+    <Form {...form} >
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-8 max-w-md mx-auto flex flex-col gap-5 mt-14 px-4"
+        className="flex flex-col mx-auto max-w-xl gap-x-5 gap-y-7 mt-14 px-4"
       >
-        <h1 className="text-2xl font-semibold text-center ">Submit Complaint</h1>
+        <h1 className="text-2xl font-semibold text-center col-span-2">Submit Complaint</h1>
 
         <FormField
           control={form.control}
           name="title"
+          
+          
           render={({ field }) => (
-            <FormItem>
+            <FormItem >
               <FormLabel>Title</FormLabel>
               <FormControl>
                 <Input placeholder="Enter title" {...field} />

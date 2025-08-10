@@ -37,21 +37,23 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.id = user.id;
         token.email = user.email;
         token.name = user.name;
+        token.role = user.role;
       }
       return token;
     },
     async session({ session, token }) {
       if (token) {
-        session.user.id = token.id!;
+        session.user.id = token.id as string;
         session.user.email = token.email!;
-        session.user.name = token.name;
+        session.user.name = token.name!;
+        session.user.role = token.role as string;
       }
       return session;
     }
   },
   pages: {
     signIn: '/signin'
-  
+
   },
   session: {
     strategy: "jwt"
